@@ -270,11 +270,11 @@ var initScene = function () {
     var bottomPost = new THREE.Mesh(bottomGeometry, postMaterial);
     var supportPost = new THREE.Mesh(supportGeometry, postMaterial);
 
-    leftUpright.position.set(-10, 250, -100);
-    rightUpright.position.set(30, 250, -100);
-    bottomPost.position.set(10, 200, -100);
+    leftUpright.position.set(-20, 250, -100);
+    rightUpright.position.set(20, 250, -100);
+    bottomPost.position.set(0, 200, -100);
     bottomPost.rotation.z = 3.14 / 2;
-    supportPost.position.set(10, 175, -100);
+    supportPost.position.set(0, 175, -100);
 
     scene.add(leftUpright);
     scene.add(rightUpright);
