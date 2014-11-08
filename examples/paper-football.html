@@ -26,9 +26,9 @@ Leap.loop({background: true}, {
 
         if (dot.toPrecision(2) < 0) {
             if (!isKicked) {
-                    document.getElementById("set").style.backgroundColor = "green";
-                    window.isSet = true;
-                    document.getElementById("flicked").style.backgroundColor = "red";
+                document.getElementById("set").style.backgroundColor = "green";
+                window.isSet = true;
+                document.getElementById("flicked").style.backgroundColor = "red";
             }
         } else {
             if (isSet) {
@@ -183,10 +183,13 @@ Leap.loop({background: true}, {
 
 // all units in mm
 var initScene = function () {
+    window.backgroundScene = new THREE.Scene();
     window.scene = new THREE.Scene();
     window.renderer = new THREE.WebGLRenderer({
         alpha: true
     });
+
+    window.renderer.autoClear = false;
 
     window.renderer.setClearColor(0x000000, 0);
     window.renderer.setSize(window.innerWidth, window.innerHeight);
@@ -201,6 +204,7 @@ var initScene = function () {
 
     var directionalLight = new THREE.DirectionalLight(0xffffff, 1);
     directionalLight.position.set(0, 0.5, 1);
+    window.backgroundScene.add(directionalLight);
     window.scene.add(directionalLight);
 
     window.camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 1000);
@@ -212,11 +216,26 @@ var initScene = function () {
         camera.aspect = window.innerWidth / window.innerHeight;
         camera.updateProjectionMatrix();
         renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.render(backgroundScene, camera);
+        renderer.clearDepth();
         renderer.render(scene, camera);
 
     }, false);
 
+    backgroundScene.add(camera);
     scene.add(camera);
+
+    //Add the football field.
+    var img = new THREE.MeshBasicMaterial({ //CHANGED to MeshBasicMaterial
+        map: THREE.ImageUtils.loadTexture('GeorgiaTech_1090.jpg')
+    });
+//    img.map.needsUpdate = true; //ADDED
+
+    // plane
+    var plane = new THREE.Mesh(new THREE.PlaneGeometry(150, 200), img);
+    plane.position.set(0, 50, 0);
+    backgroundScene.add(plane);
+
     var geometry = new THREE.Geometry();
     geometry.vertices.push(
             new THREE.Vector3(0, 20, 0),
@@ -242,8 +261,8 @@ var initScene = function () {
 
     //Create field goal posts
     var uprightGeometry = new THREE.CylinderGeometry(2, 2, 100, 32);
-    var bottomGeometry = new THREE.CylinderGeometry(2,2,40,32);
-    var supportGeometry = new THREE.CylinderGeometry(2,2,50,32);
+    var bottomGeometry = new THREE.CylinderGeometry(2, 2, 40, 32);
+    var supportGeometry = new THREE.CylinderGeometry(2, 2, 50, 32);
     var postMaterial = new THREE.MeshPhongMaterial({color: 0xffcc00});
 
     var leftUpright = new THREE.Mesh(uprightGeometry, postMaterial);
@@ -253,15 +272,17 @@ var initScene = function () {
 
     leftUpright.position.set(-10, 250, -100);
     rightUpright.position.set(30, 250, -100);
-    bottomPost.position.set(10,200,-100);
-    bottomPost.rotation.z = 3.14/2;
-    supportPost.position.set(10,175,-100);
+    bottomPost.position.set(10, 200, -100);
+    bottomPost.rotation.z = 3.14 / 2;
+    supportPost.position.set(10, 175, -100);
 
     scene.add(leftUpright);
     scene.add(rightUpright);
     scene.add(bottomPost);
     scene.add(supportPost);
 
+    renderer.render(backgroundScene, camera);
+    renderer.clearDepth();
     renderer.render(scene, camera);
 };
 
@@ -291,6 +312,9 @@ var rotateFootball = function () {
             window.descending = false;
         }
     }
+
+    renderer.render(backgroundScene, camera);
+    renderer.clearDepth();
     renderer.render(scene, camera);
     window.requestAnimationFrame(rotateFootball);
 };
