@@ -21,17 +21,21 @@ window.isKicked = false;
 Leap.loop({background: true}, {
     hand: function (hand) {
 
+        //Check to see if the index finger is 'cocked back'
         var dot = Leap.vec3.dot(hand.direction, hand.indexFinger.direction);
         console.assert(!isNaN(dot));
 
         if (dot.toPrecision(2) < 0) {
+            //If not already kicked then the finger is cocked back and ready to kick
             if (!isKicked) {
                 document.getElementById("set").style.backgroundColor = "green";
                 window.isSet = true;
                 document.getElementById("flicked").style.backgroundColor = "red";
             }
         } else {
+            //If the finger was cocked back, then the return to straight will initiate the kick
             if (isSet) {
+                //Do some rough fuzzy area correct location of finger to football.
                 if (hand.indexFinger.carpPosition[0] >= -80 && hand.indexFinger.carpPosition[0] <= 0 &&
                         hand.indexFinger.carpPosition[1] >= 90 && hand.indexFinger.carpPosition[1] <= 200) {
                     document.getElementById("flicked").style.backgroundColor = "green";
@@ -180,8 +184,6 @@ Leap.loop({background: true}, {
         })
         .connect();
 
-
-// all units in mm
 var initScene = function () {
     window.backgroundScene = new THREE.Scene();
     window.scene = new THREE.Scene();
@@ -225,13 +227,11 @@ var initScene = function () {
     backgroundScene.add(camera);
     scene.add(camera);
 
-    //Add the football field.
+    // Create the Field and add it to the background scene to set the order.
     var img = new THREE.MeshBasicMaterial({ //CHANGED to MeshBasicMaterial
         map: THREE.ImageUtils.loadTexture('GeorgiaTech_1090.jpg')
     });
-//    img.map.needsUpdate = true; //ADDED
 
-    // plane
     var plane = new THREE.Mesh(new THREE.PlaneGeometry(150, 200), img);
     plane.position.set(0, 50, 0);
     backgroundScene.add(plane);
@@ -289,6 +289,7 @@ var initScene = function () {
 initScene();
 
 var rotateFootball = function () {
+    //If the football has been kicked handle the rotation and movement of the ball
     if (isKicked) {
         paperFootball.rotation.x -= 0.2;
         paperFootball.position.z -= 0.5;
@@ -301,6 +302,7 @@ var rotateFootball = function () {
             footballHeight--;
         }
 
+        //Once the ball is descending and reaches the right threshold, reset.
         if (footballHeight < 50 && window.descending) {
             window.isSet = false;
             window.isKicked = false;
