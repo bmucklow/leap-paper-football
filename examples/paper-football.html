@@ -36,8 +36,8 @@ Leap.loop({background: true}, {
             //If the finger was cocked back, then the return to straight will initiate the kick
             if (isSet) {
                 //Do some rough fuzzy area correct location of finger to football.
-                if (hand.indexFinger.carpPosition[0] >= -80 && hand.indexFinger.carpPosition[0] <= 0 &&
-                        hand.indexFinger.carpPosition[1] >= 90 && hand.indexFinger.carpPosition[1] <= 200) {
+                if (hand.indexFinger.carpPosition[0] >= -100 && hand.indexFinger.carpPosition[0] <= 20 &&
+                        hand.indexFinger.carpPosition[1] >= 50 && hand.indexFinger.carpPosition[1] <= 250) {
                     document.getElementById("flicked").style.backgroundColor = "green";
                     window.isKicked = true;
                 }
